@@ -36,39 +36,51 @@ def create_train_data(train_dir,csv):
     count1=0
     val_filename = 'train.tfrecords'  # address to save the TFRecords file
     writer = tf.python_io.TFRecordWriter(val_filename)
-    for img in tqdm(dir_list):
+    r1=0
+    dir_len=len(dir_list)
+    for img in tqdm(range(0,dir_len,2)):
         for i in range(100000):
-            r=img.split('.')[0]
-            if r==csv[count1][0]:
-                path=os.path.join(train_dir,img)
-                with open(path, "rb") as image_file:
-                    encoded_string = image_file.read()
+            
+            r=dir_list[img].split('.')[0]
 
-
+            ret=r.split("_")[0]
+            
+            if ret==csv[count1][0].split("_")[0]:
+                path1=os.path.join(train_dir,dir_list[img])
+                path2=os.path.join(train_dir,dir_list[img+1])
+                
+                with open(path2, "rb") as image_file:
+                    encoded_string1 = image_file.read()
+                    image1=encoded_string1
+                with open(path2, "rb") as image_file:  
+                    encoded_string2 = image_file.read()
+                    image2=encoded_string2
+                
+                    
                 label=int(csv[count1][1])
                 feature = {
-                    'label': _int64_feature(label),
-                    'image': _bytes_feature(encoded_string)
+                'label': _int64_feature(label),
+                'image1': _bytes_feature(image1),
+                'image2': _bytes_feature(image2)
                 }
-
+                
                 example = tf.train.Example(features=tf.train.Features(feature=feature))
                 writer.write(example.SerializeToString())
-
-
-                count1=count1+1
-                if(count1>=length):
-                    count1=0
                 break
+                    
+            
+            length=len(csv)
             count1=count1+1
             if(count1>=length):
                 count1=0
+                
+               
+        
     writer.close()
+    
 
 
 
 
 
 create_train_data(TRAIN_DIR,csvreader1)   
-
-
-        
