@@ -31,7 +31,7 @@ def data_pipe_line(data,checkpoint_path,i_data=None,epoch=200):
 
         loss=tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits_v2(labels=Y,logits=logits))
         #the learning rate is so low because the batch-size is very small and has a lot of noise
-        optimizer=tf.train.AdamOptimizer(learning_rate=0.000001).minimize(loss)
+        optimizer=tf.train.AdamOptimizer(learning_rate=0.000005).minimize(loss)
         #getting the accuracy
         prediction=tf.argmax(logits,1)
         equality=tf.equal(prediction,tf.argmax(Y,1))
