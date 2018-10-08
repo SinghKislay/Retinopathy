@@ -38,30 +38,25 @@ def create_train_data(train_dir,csv):
     writer = tf.python_io.TFRecordWriter(val_filename)
     r1=0
     dir_len=len(dir_list)
-    for img in tqdm(range(0,dir_len,2)):
+    for img in tqdm(dir_list):
         for i in range(100000):
+            ret=img.split('.')[0]
             
-            r=dir_list[img].split('.')[0]
-
-            ret=r.split("_")[0]
             
-            if ret==csv[count1][0].split("_")[0]:
-                path1=os.path.join(train_dir,dir_list[img])
-                path2=os.path.join(train_dir,dir_list[img+1])
+            if ret==csv[count1][0]:
+                path=os.path.join(train_dir,img)
                 
-                with open(path2, "rb") as image_file:
+                
+                with open(path, "rb") as image_file:
                     encoded_string1 = image_file.read()
-                    image1=encoded_string1
-                with open(path2, "rb") as image_file:  
-                    encoded_string2 = image_file.read()
-                    image2=encoded_string2
+                    image=encoded_string1
+               
                 
                     
                 label=int(csv[count1][1])
                 feature = {
                 'label': _int64_feature(label),
-                'image1': _bytes_feature(image1),
-                'image2': _bytes_feature(image2)
+                'image': _bytes_feature(image),
                 }
                 
                 example = tf.train.Example(features=tf.train.Features(feature=feature))
@@ -73,9 +68,7 @@ def create_train_data(train_dir,csv):
             count1=count1+1
             if(count1>=length):
                 count1=0
-                
                
-        
     writer.close()
     
 
